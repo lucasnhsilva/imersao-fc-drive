@@ -2,5 +2,4 @@
 @bearer = Bearer 
 
 ### Buscar locais para o mapa
-GET {{host}}/places?text=Local HTTP/1.1
-Authorization: {{bearer}}
+GET {{host}}/places?text=Mogi Guaçu HTTP/1.1
