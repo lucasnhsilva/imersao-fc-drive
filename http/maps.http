@@ -2,4 +2,13 @@
 @bearer = Bearer 
 
 ### Buscar locais para o mapa
-GET {{host}}/places?text=Mogi Guaçu HTTP/1.1
+GET {{host}}/places?text=Petrópolis HTTP/1.1
+
+###
+
+@originId=ChIJd3oMGQNFyJQRUFpQPpvlEQQ
+@destinationId=ChIJbyPZgn4AmQARegBp03EYJKk
+
+### Buscar direções entre dois pontos no mapa
+
+GET {{host}}/directions?originId={{originId}}&destinationId={{destinationId}} HTTP/1.1
