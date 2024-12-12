@@ -1,3 +1,25 @@
 @host = http://localhost:3000
 @bearer = Bearer 
 
+### Cria rota de viagem
+@originId=ChIJd3oMGQNFyJQRUFpQPpvlEQQ
+@destinationId=ChIJbyPZgn4AmQARegBp03EYJKk
+
+POST {{host}}/routes HTTP/1.1
+Content-Type: application/json
+
+{
+    "name" : "Mogi Guaçu até Petrópolis",
+    "source_id": "{{ originId }}",
+    "destination_id": "{{ destinationId }}"
+}
+
+
+### Consultar rotas
+
+GET {{host}}/routes HTTP/1.1
+
+
+### Buscar rota pelo id
+
+GET {{host}}/routes/675a3a93829f985224df64f4 HTTP/1.1

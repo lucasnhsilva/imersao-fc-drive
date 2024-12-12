@@ -2,20 +2,59 @@ import { Injectable } from '@nestjs/common';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { DirectionsService } from 'src/maps/directions/directions.service';
 
 @Injectable()
 export class RoutesService {
-  constructor(private readonly prisma: PrismaService) {}
-  create(createRouteDto: CreateRouteDto) {
-    return 'This action adds a new route';
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly directionsService: DirectionsService,
+  ) {}
+  async create(createRouteDto: CreateRouteDto) {
+    const { available_travel_modes, geocoded_waypoints, routes, request } =
+      await this.directionsService.getDirections(
+        createRouteDto.source_id,
+        createRouteDto.destination_id,
+      );
+
+    const legs = routes[0].legs[0];
+
+    await this.prisma.route.create({
+      data: {
+        name: createRouteDto.name,
+        source: {
+          name: legs.start_address,
+          location: {
+            lat: legs.start_location.lat,
+            lng: legs.start_location.lng,
+          },
+        },
+        destination: {
+          name: legs.end_address,
+          location: { lat: legs.end_location.lat, lng: legs.end_location.lng },
+        },
+        duration: legs.duration.value,
+        distance: legs.distance.value,
+        directions: JSON.parse(
+          JSON.stringify({
+            available_travel_modes,
+            geocoded_waypoints,
+            routes,
+            request,
+          }),
+        ),
+      },
+    });
   }
 
   findAll() {
-    return `This action returns all routes`;
+    return this.prisma.route.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} route`;
+  findOne(id: string) {
+    return this.prisma.route.findUniqueOrThrow({
+      where: { id },
+    });
   }
 
   update(id: number, updateRouteDto: UpdateRouteDto) {
